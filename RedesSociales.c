@@ -13,7 +13,6 @@ void crearMatrizVacia(int cantidadVertices, int matrizAdyacencia[cantidadVertice
 
 void mostrarMatriz(int cantidadVertices, int matrizAdyacencia[cantidadVertices][cantidadVertices]){
    int i,j;
-   printf("La matriz de adyacencia vacía es: \n");
    for(i = 0;i < cantidadVertices ; i++){
       for(j = 0 ; j < cantidadVertices; j++){
          printf("[ %d ]", matrizAdyacencia[i][j] );
@@ -24,10 +23,8 @@ void mostrarMatriz(int cantidadVertices, int matrizAdyacencia[cantidadVertices][
 }
 
 int main(int argc, char const *argv[]) {
-   int cantidadVertices,vertice;
-   char espacio;
+   int cantidadVertices,vertice,conexion;
    FILE *archivoObjetivo=fopen("Entrada.in","r");
-
    //Obtener la cantidad de vertices y adecuar la matriz a esa cantidad.
    fscanf(archivoObjetivo,"%d",&cantidadVertices);
    int matrizAdyacencia[cantidadVertices][cantidadVertices];
@@ -46,18 +43,25 @@ int main(int argc, char const *argv[]) {
    //Creación de la matriz vacía.
    crearMatrizVacia(cantidadVertices,matrizAdyacencia);
    //Imprimir la matriz vacía.
+   printf("\nLa matriz de adyacencia vacía es: \n");
    mostrarMatriz(cantidadVertices,matrizAdyacencia);
    //Recorrer el archivo imprimiendo cada uno de los números hasta el final del archivo.
    while(!feof(archivoObjetivo)){
-         fscanf(archivoObjetivo,"%d%c",&vertice,&espacio);
+         fscanf(archivoObjetivo,"%d%d",&vertice,&conexion);
          if(vertice > cantidadVertices  ||  vertice < 0){
             printf("ERROR DE FORMATO EN EL ARCHIVO DE TEXTO (VERTICES ADYACENTES)\n" );
             return 0;
          }
-         if(vertice != 0  &&  !feof(archivoObjetivo)){
-            //printf("Vertice: %d\n",vertice);
+         if(vertice != 0  && conexion != 0  &&  !feof(archivoObjetivo)){
+            //Parte superior de la matriz.
+            matrizAdyacencia[vertice-1][conexion-1] = 1;
+            //Parte inferior de la matriz.
+            matrizAdyacencia[conexion-1][vertice-1] = 1;
          }
    }
+   //Imprimir la matriz de adyacencia.
+   printf("\nLa matriz de adyacencia es: \n");
+   mostrarMatriz(cantidadVertices,matrizAdyacencia);
    //Cerrar el archivo -> buenas prácticas y evita errores.
    fclose(archivoObjetivo);
    return 0;
