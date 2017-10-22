@@ -84,53 +84,6 @@ void agregarVertice(Vertice* vertice){
 		}
 }
 
-/*void eliminarVertice(int numeroVertice){ // Elimina el elemento en la posición n. (1 = posición 1)
-    Vertice* verticeAux;
-    Carta* anterior;
-    int pos = 1;
-    verticeAux = lista.inicio;
-    if(n > lista.longitud || n < 1){
-    	printf("Elemento fuera de la Lista\n"); // Quitar.
-    }
-    else{
-        if(n == 1){
-            verticeAux = lista.inicio;
-            lista.inicio = lista.inicio->sgte;
-            free(verticeAux);
-            lista.longitud--;
-            }
-        else if(n == lista.longitud){
-            while(pos < lista.longitud){
-                if(pos == (lista.longitud-1)){
-                    anterior = aux;
-                }
-                pos++;
-                verticeAux = verticeAux->sgte;
-            }
-            free(verticeAux);
-            anterior->sgte = NULL;
-            lista.longitud--;
-        }
-        else{
-           while(pos <= lista.longitud){
-                if(pos == (n-1)){
-                    anterior = aux;
-                }
-                if(pos == n){
-                    free(verticeAux);
-                }
-                if(pos == (n+1)){
-                    anterior->sgte = verticeAux;
-                }
-                pos++;
-                verticeAux= verticeAux->sgte;
-            }
-         	lista.longitud--;
-        }
-    }
-    return lista;
-}*/
-
 void agregarVerticeAdyacente(Vertice* verticeObjetivo, VA* verticeAdyacente){
    int i;
    Vertice* verticeAux = verticeObjetivo;
@@ -177,12 +130,12 @@ void rellenarListaAdyacencia(int cantidadVertices, int matrizAdyacencia[cantidad
 }
 
 void mostrarVerticeAdyacente(VA* verticeAdyacente) {
-   printf("  %d  ", verticeAdyacente -> verticeConectado);
+   printf("[ %d ]", verticeAdyacente -> verticeConectado);
    return;
 }
 
 void mostrarVertice(Vertice* vertice){
-	printf("Vertice: %d ->", vertice -> numeroVertice);
+	printf("Vertice: %d -> ", vertice -> numeroVertice);
    VA* verticeAdyacenteAux = vertice->inicio;
 	while(verticeAdyacenteAux-> siguiente != NULL){
 		mostrarVerticeAdyacente(verticeAdyacenteAux);
@@ -259,8 +212,85 @@ void mostrarCliques(int cantidadVertices, int matrizAdyacencia[cantidadVertices]
    return;
 }
 
+int buscarVerticeInicial(int cantidadVertices, int matrizAdyacencia[cantidadVertices][cantidadVertices]){
+	int i;
+	for(i = 0; i < cantidadVertices; i++){
+		if(matrizAdyacencia[0][i] == 1){
+			return 0;
+		}
+	}
+	return 1;
+}
+
+int nuevoVerticeInicial(int marcados[], int recorridos[], int cantidadVertices){
+	int i;
+	for (i = 0; i < cantidadVertices; i++){
+		if (marcados[i] != recorridos[i] && recorridos[i] == 0){
+			return i;
+		}
+	}
+	return -1;
+}
+
+int agenteVinculo(int cantidadVertices, int copiaMatrizAdyacencia[cantidadVertices][cantidadVertices], int verticeInicial){
+   int i,j,k,verificador;
+   int marcados[cantidadVertices];
+	int recorridos[cantidadVertices];
+	for (i = 0; i < cantidadVertices ; i++){
+		marcados[i] = 0;
+      recorridos[i] = 0;
+	}
+	while(verticeInicial != -1){
+		marcados[verticeInicial] = 1;
+		for(j = 0; j < cantidadVertices; j++){
+			if(copiaMatrizAdyacencia[verticeInicial][j] == 1){
+				marcados[j] = 1;
+			}
+		}
+		recorridos[verticeInicial] = 1;
+		verticeInicial = nuevoVerticeInicial(marcados, recorridos, cantidadVertices);
+	}
+	verificador = 0;
+	for(k = 0; k < cantidadVertices; k++){
+		if(marcados[k] == 1){
+			verificador++;
+		}
+	}
+	if(verificador < cantidadVertices-1){
+		return 1;
+	}
+   else{
+		return 0;
+	}
+}
+
+void buscarArticulacion(int cantidadVertices, int matrizAdyacencia[cantidadVertices][cantidadVertices]){
+	int i,j,k,h,vertice,verticeInicial,articulacion;
+   int copiaMatrizAdyacencia[cantidadVertices][cantidadVertices];
+	for(i = 0; i < cantidadVertices; i++){
+		vertice = 0;
+      //Copiar Matriz.
+   	for (k = 0; k < cantidadVertices; k++){
+   	    for (h = 0; h < cantidadVertices; h++){
+   	    	copiaMatrizAdyacencia[k][h] = matrizAdyacencia[k][h];
+   		}
+   	}
+      //Fin copia de Matriz.
+		for(j = 0; j < cantidadVertices; j++){
+			copiaMatrizAdyacencia[i][j] = 0;
+			copiaMatrizAdyacencia[j][i] = 0;
+		}
+		verticeInicial = buscarVerticeInicial(cantidadVertices, copiaMatrizAdyacencia);
+		articulacion = agenteVinculo(cantidadVertices, copiaMatrizAdyacencia, verticeInicial);
+		if(articulacion == 1){
+         printf("----------------------\n");
+			printf("El vertice numero %d es un agente de vinculo\n", i+1);
+		}
+	}
+}
+
 int main(int argc, char const *argv[]) {
-   int cantidadVertices,vertice,conexion;
+   int i,j,cantidadVertices,vertice,conexion;
    FILE *archivoObjetivo=fopen("Entrada.in","r");
    //Obtener la cantidad de vertices y adecuar la matriz a esa cantidad.
    fscanf(archivoObjetivo,"%d",&cantidadVertices);
@@ -275,13 +305,13 @@ int main(int argc, char const *argv[]) {
       printf("EL GRAFO NO POSEE VERTICES (GRAFO NULO)\n");
       return 0;
    }
+   //Información.
+   printf("\n******************************************************************************************\n");
+   printf("*******************************Informacion Adicional**************************************\n");
    //Imprimir la cantidad de vertices (primer número del archivo).
-   printf("Número de vertices: %d\n", cantidadVertices);
+   printf("Numero de vertices: %d\n", cantidadVertices);
    //Creación de la matriz vacía.
    vaciarMatriz(cantidadVertices,matrizAdyacencia);
-   //Imprimir la matriz vacía.
-   printf("\nLa matriz de adyacencia vacía es: \n");
-   mostrarMatriz(cantidadVertices,matrizAdyacencia);
    //Recorrer el archivo imprimiendo cada uno de los números hasta el final del archivo.
    while(!feof(archivoObjetivo)){
          fscanf(archivoObjetivo,"%d%d",&vertice,&conexion);
@@ -307,8 +337,10 @@ int main(int argc, char const *argv[]) {
    crearListaAdyacencia(cantidadVertices,matrizAdyacencia);
    rellenarListaAdyacencia(cantidadVertices,matrizAdyacencia);
    mostrarListaAdyacencia();
+   printf("***************************Fin Informacion Adicional**************************************\n");
+   printf("\n******************************************************************************************\n");
    mostrarCliques(cantidadVertices,matrizAdyacencia);
-
-
+   buscarArticulacion(cantidadVertices, matrizAdyacencia);
+   printf("\n******************************************************************************************\n");
    return 0;
 }
