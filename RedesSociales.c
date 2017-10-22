@@ -84,6 +84,53 @@ void agregarVertice(Vertice* vertice){
 		}
 }
 
+/*void eliminarVertice(int numeroVertice){ // Elimina el elemento en la posición n. (1 = posición 1)
+    Vertice* verticeAux;
+    Carta* anterior;
+    int pos = 1;
+    verticeAux = lista.inicio;
+    if(n > lista.longitud || n < 1){
+    	printf("Elemento fuera de la Lista\n"); // Quitar.
+    }
+    else{
+        if(n == 1){
+            verticeAux = lista.inicio;
+            lista.inicio = lista.inicio->sgte;
+            free(verticeAux);
+            lista.longitud--;
+            }
+        else if(n == lista.longitud){
+            while(pos < lista.longitud){
+                if(pos == (lista.longitud-1)){
+                    anterior = aux;
+                }
+                pos++;
+                verticeAux = verticeAux->sgte;
+            }
+            free(verticeAux);
+            anterior->sgte = NULL;
+            lista.longitud--;
+        }
+        else{
+           while(pos <= lista.longitud){
+                if(pos == (n-1)){
+                    anterior = aux;
+                }
+                if(pos == n){
+                    free(verticeAux);
+                }
+                if(pos == (n+1)){
+                    anterior->sgte = verticeAux;
+                }
+                pos++;
+                verticeAux= verticeAux->sgte;
+            }
+         	lista.longitud--;
+        }
+    }
+    return lista;
+}*/
+
 void agregarVerticeAdyacente(Vertice* verticeObjetivo, VA* verticeAdyacente){
    int i;
    Vertice* verticeAux = verticeObjetivo;
@@ -157,6 +204,61 @@ void mostrarListaAdyacencia(){ // Sólo para uso del Desarrollador.
 	printf("\n");
 }
 
+void mostrarCliques(int cantidadVertices, int matrizAdyacencia[cantidadVertices][cantidadVertices]){
+   int i,u,v,w,x,contador;
+   int clique[4];
+   clique[1] = 0; clique[2] = 0; clique[3] = 0; clique[4] = 0;
+   for (u = 0; u < cantidadVertices; u++){
+      for (v = 0; v < cantidadVertices; v++){
+         for (w = 0; w < cantidadVertices; w++){
+            for (x = 0; x < cantidadVertices; x++){
+               if(u != v  &&  matrizAdyacencia[u][v] == 1 &&
+                  u != w  &&  matrizAdyacencia[u][w] == 1 &&
+                  u != x  &&  matrizAdyacencia[u][x] == 1 &&
+                  v != w  &&  matrizAdyacencia[v][w] == 1 &&
+                  v != x  &&  matrizAdyacencia[v][x] == 1 &&
+                  w != x  &&  matrizAdyacencia[w][x] == 1){
+                     contador = 0;
+                     if(clique[1] == 0 && clique[2] == 0 && clique[3] == 0 && clique[4] == 0){
+                        clique[1] = u; clique[2] = v; clique[3] = w; clique[4] = x;
+                        printf("El clique es: %d ,%d ,%d, %d\n",u+1 ,v+1 ,w+1 ,x+1 );
+                     }
+                     else{
+                        for (i = 0; i < 4; i++) {
+                           if(clique[i] == u){
+                              contador++;
+                           }
+                        }
+                        for (i = 0; i < 4; i++) {
+                           if(clique[i] == v){
+                              contador++;
+                           }
+                        }
+                        for (i = 0; i < 4; i++) {
+                           if(clique[i] == w){
+                              contador++;
+                           }
+                        }
+                        for (i = 0; i < 4; i++) {
+                           if(clique[i] == x){
+                              contador++;
+                           }
+                        }
+                        if(contador != 3){
+                           clique[1] = u; clique[2] = v; clique[3] = w; clique[4] = x;
+                           printf("----------------------\n");
+                           printf("El clique es: %d ,%d ,%d, %d\n",u+1 ,v+1 ,w+1 ,x+1 );
+                           contador = 0;
+                        }
+                     }
+               }
+            }
+         }
+      }
+   }
+   return;
+}
+
 int main(int argc, char const *argv[]) {
    int cantidadVertices,vertice,conexion;
    FILE *archivoObjetivo=fopen("Entrada.in","r");
@@ -205,7 +307,7 @@ int main(int argc, char const *argv[]) {
    crearListaAdyacencia(cantidadVertices,matrizAdyacencia);
    rellenarListaAdyacencia(cantidadVertices,matrizAdyacencia);
    mostrarListaAdyacencia();
-
+   mostrarCliques(cantidadVertices,matrizAdyacencia);
 
 
    return 0;
