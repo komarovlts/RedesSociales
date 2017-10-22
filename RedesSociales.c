@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 //Declaración de estructuras para la lista de adyacencia.
 typedef struct verticeAdyacente{
@@ -147,7 +148,6 @@ void mostrarVertice(Vertice* vertice){
 }
 
 void mostrarListaAdyacencia(){ // Sólo para uso del Desarrollador.
-   printf("\n");
    Vertice* verticeAux = listaAdyacencia.inicio;
 	while(verticeAux -> siguiente != NULL){
 		mostrarVertice(verticeAux);
@@ -158,6 +158,14 @@ void mostrarListaAdyacencia(){ // Sólo para uso del Desarrollador.
 }
 
 void mostrarCliques(int cantidadVertices, int matrizAdyacencia[cantidadVertices][cantidadVertices]){
+   //Inicializador de parametros para toma de tiempo.
+   clock_t tiempoInicial, tiempoFinal;
+   double tiempoTotal;
+   int m;
+   //Fin de inicialización.
+   //Toma de tiempo.
+   tiempoInicial = clock();
+   //Inicio del algoritmo.
    int i,u,v,w,x,contador;
    int clique[4];
    clique[1] = 0; clique[2] = 0; clique[3] = 0; clique[4] = 0;
@@ -174,7 +182,7 @@ void mostrarCliques(int cantidadVertices, int matrizAdyacencia[cantidadVertices]
                      contador = 0;
                      if(clique[1] == 0 && clique[2] == 0 && clique[3] == 0 && clique[4] == 0){
                         clique[1] = u; clique[2] = v; clique[3] = w; clique[4] = x;
-                        printf("El clique es: %d ,%d ,%d, %d\n",u+1 ,v+1 ,w+1 ,x+1 );
+                        printf("%d ,%d ,%d, %d conforman un grupo de mejores amigos.\n",u+1 ,v+1 ,w+1 ,x+1 );
                      }
                      else{
                         for (i = 0; i < 4; i++) {
@@ -199,8 +207,7 @@ void mostrarCliques(int cantidadVertices, int matrizAdyacencia[cantidadVertices]
                         }
                         if(contador != 3){
                            clique[1] = u; clique[2] = v; clique[3] = w; clique[4] = x;
-                           printf("----------------------\n");
-                           printf("El clique es: %d ,%d ,%d, %d\n",u+1 ,v+1 ,w+1 ,x+1 );
+                           printf("%d ,%d ,%d, %d conforman un grupo de mejores amigos.\n",u+1 ,v+1 ,w+1 ,x+1 );
                            contador = 0;
                         }
                      }
@@ -209,6 +216,11 @@ void mostrarCliques(int cantidadVertices, int matrizAdyacencia[cantidadVertices]
          }
       }
    }
+   //Fin del algoritmo.
+   //Calculo de tiempo.
+   tiempoFinal = clock();
+   tiempoTotal = (double)(tiempoFinal - tiempoInicial) / CLOCKS_PER_SEC;
+   printf("[Tiempo total tomado por la CPU para conseguir los grupos de mejores amigos es: %.16g milisegundos]\n\n", tiempoTotal* 1000.0);
    return;
 }
 
@@ -265,6 +277,14 @@ int agenteVinculo(int cantidadVertices, int copiaMatrizAdyacencia[cantidadVertic
 }
 
 void buscarArticulacion(int cantidadVertices, int matrizAdyacencia[cantidadVertices][cantidadVertices]){
+   //Inicializador de parametros para toma de tiempo.
+   clock_t tiempoInicial, tiempoFinal;
+   double tiempoTotal;
+   int m;
+   //Fin de inicialización.
+   //Toma de tiempo.
+   tiempoInicial = clock();
+   //Inicio del algoritmo.
 	int i,j,k,h,vertice,verticeInicial,articulacion;
    int copiaMatrizAdyacencia[cantidadVertices][cantidadVertices];
 	for(i = 0; i < cantidadVertices; i++){
@@ -283,13 +303,26 @@ void buscarArticulacion(int cantidadVertices, int matrizAdyacencia[cantidadVerti
 		verticeInicial = buscarVerticeInicial(cantidadVertices, copiaMatrizAdyacencia);
 		articulacion = agenteVinculo(cantidadVertices, copiaMatrizAdyacencia, verticeInicial);
 		if(articulacion == 1){
-         printf("----------------------\n");
-			printf("El vertice numero %d es un agente de vinculo\n", i+1);
+			printf("%d es un agente de vinculo\n", i+1);
 		}
 	}
+   //Fin del algoritmo.
+   //Calculo de tiempo.
+   tiempoFinal = clock();
+   tiempoTotal = (double)(tiempoFinal - tiempoInicial) / CLOCKS_PER_SEC;
+   printf("[Tiempo total tomado por la CPU para conseguir los agentes de vinculo es: %.16g milisegundos]\n\n", tiempoTotal* 1000.0);
+   return;
 }
 
 int main(int argc, char const *argv[]) {
+   /*//Inicializador de parametros para toma de tiempo.
+   clock_t tiempoInicial, tiempoFinal;
+   double tiempoTotal;
+   int m;
+   //Fin de inicialización.
+   //Toma de tiempo.
+   tiempoInicial = clock();
+   //Inicio del programa.*/
    int i,j,cantidadVertices,vertice,conexion;
    FILE *archivoObjetivo=fopen("Entrada.in","r");
    //Obtener la cantidad de vertices y adecuar la matriz a esa cantidad.
@@ -336,11 +369,19 @@ int main(int argc, char const *argv[]) {
    inicializarListaAdyacencia();
    crearListaAdyacencia(cantidadVertices,matrizAdyacencia);
    rellenarListaAdyacencia(cantidadVertices,matrizAdyacencia);
+   printf("\nLa lista de adyacencia es:\n");
    mostrarListaAdyacencia();
-   printf("***************************Fin Informacion Adicional**************************************\n");
-   printf("\n******************************************************************************************\n");
-   mostrarCliques(cantidadVertices,matrizAdyacencia);
+   printf("***************************Fin Informacion Adicional**************************************\n\n");
+   printf("***********************Inicio de Informacion Solicidata***********************************\n\n");
    buscarArticulacion(cantidadVertices, matrizAdyacencia);
-   printf("\n******************************************************************************************\n");
+   printf("------------------------------------------------------------------------------------------\n\n");
+   mostrarCliques(cantidadVertices,matrizAdyacencia);
+   /*printf("------------------------------------------------------------------------------------------\n\n");
+   //Fin del programa.
+   //Calculo de tiempo.
+   tiempoFinal = clock();
+   tiempoTotal = (double)(tiempoFinal - tiempoInicial) / CLOCKS_PER_SEC;
+   printf("[Tiempo total tomado por la CPU para la ejecución del programa es: %.16g milisegundos]\n\n", tiempoTotal* 1000.0);*/
+   printf("********************************Fin del Programa******************************************\n");
    return 0;
 }
