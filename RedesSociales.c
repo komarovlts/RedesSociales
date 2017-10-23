@@ -372,7 +372,7 @@ int main(int argc, char const *argv[]) {
    printf("\nLa lista de adyacencia es:\n");
    mostrarListaAdyacencia();
    printf("***************************Fin Informacion Adicional**************************************\n\n");
-   printf("***********************Inicio de Informacion Solicidata***********************************\n\n");
+   printf("*****************************Informacion Solicitada***************************************\n\n");
    buscarArticulacion(cantidadVertices, matrizAdyacencia);
    printf("------------------------------------------------------------------------------------------\n\n");
    mostrarCliques(cantidadVertices,matrizAdyacencia);
@@ -382,6 +382,6 @@ int main(int argc, char const *argv[]) {
    tiempoFinal = clock();
    tiempoTotal = (double)(tiempoFinal - tiempoInicial) / CLOCKS_PER_SEC;
    printf("[Tiempo total tomado por la CPU para la ejecución del programa es: %.16g milisegundos]\n\n", tiempoTotal* 1000.0);*/
-   printf("********************************Fin del Programa******************************************\n");
+   printf("*******************************Fin del Programa*******************************************\n");
    return 0;
 }
